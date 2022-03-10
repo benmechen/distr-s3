@@ -154,12 +154,15 @@ export class MainController implements MainServiceController {
 		);
 
 		try {
-			const status = await this.s3Service.create(
+			const res = await this.s3Service.create(
 				credentials,
 				request.resourceId,
 				input,
 			);
-			return { status };
+
+			const properties = res ? this.helperService.dtoToPayload(res) : [];
+
+			return { status: !!res, properties };
 		} catch (err) {
 			switch (err.name) {
 				case 'BucketAlreadyExists':
@@ -221,6 +224,7 @@ export class MainController implements MainServiceController {
 
 			return {
 				status,
+				properties: [],
 			};
 		} catch (err) {
 			switch (err.name) {
@@ -243,6 +247,7 @@ export class MainController implements MainServiceController {
 				default:
 					return {
 						status: false,
+						properties: [],
 					};
 			}
 		}

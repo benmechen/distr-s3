@@ -95,9 +95,14 @@ export class S3Service {
 		});
 
 		const response = await client.send(command);
+
+		if (!response.Location) return false;
+
 		await this.s3Repository.persistAndFlush(s3);
 
-		return !!response.Location;
+		return {
+			location: response.Location,
+		};
 	}
 
 	async update(
