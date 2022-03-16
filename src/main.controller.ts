@@ -1,25 +1,22 @@
 import { Controller } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { status as GrpcStatus } from '@grpc/grpc-js';
-import { BucketAlreadyExists } from '@aws-sdk/client-s3';
 import { MissingCredentialsException } from './exceptions/missing-credentials.exception';
 import {
 	CreateRequest,
 	CreateResponse,
 	DeleteRequest,
 	DeleteResponse,
-	Field_Type,
+	Field_Type as FieldType,
 	GetRequest,
 	GetResponse,
 	Method,
 	ReflectMethodRequest,
 	ReflectMethodResponse,
-	Status,
 	StatusRequest,
 	StatusResponse,
 	UpdateRequest,
 	UpdateResponse,
-	UsageRequest,
 	UsageResponse,
 	UsageType,
 } from './generated/co/mechen/distr/common/v1';
@@ -50,21 +47,21 @@ export class MainController implements MainServiceController {
 						{
 							name: 'name',
 							description: 'Bucket name (globally unique)',
-							type: Field_Type.STRING,
+							type: FieldType.STRING,
 							required: true,
 							fields: {},
 						},
 						{
 							name: 'public',
 							description: 'Are the objects publically visible?',
-							type: Field_Type.BOOLEAN,
+							type: FieldType.BOOLEAN,
 							required: true,
 							fields: {},
 						},
 						{
 							name: 'location',
 							description: 'Region the bucket is hosted in',
-							type: Field_Type.STRING,
+							type: FieldType.STRING,
 							required: false,
 							fields: {},
 						},
@@ -78,7 +75,7 @@ export class MainController implements MainServiceController {
 							name: 'name',
 							description:
 								'Bucket name (must be globally unique)',
-							type: Field_Type.STRING,
+							type: FieldType.STRING,
 							required: true,
 							fields: {},
 						},
@@ -86,7 +83,7 @@ export class MainController implements MainServiceController {
 							name: 'access',
 							description:
 								'ACL Access Level (private, public-read, public-read-write, authenticated-read)',
-							type: Field_Type.STRING,
+							type: FieldType.STRING,
 							required: false,
 							fields: {},
 						},
@@ -101,11 +98,17 @@ export class MainController implements MainServiceController {
 							name: 'access',
 							description:
 								'ACL Access Level (private, public-read, public-read-write, authenticated-read)',
-							type: Field_Type.STRING,
+							type: FieldType.STRING,
 							required: false,
 							fields: {},
 						},
 					],
+					outputs: [],
+				};
+			default:
+				return {
+					method: Method.UNRECOGNIZED,
+					inputs: [],
 					outputs: [],
 				};
 		}
@@ -192,11 +195,6 @@ export class MainController implements MainServiceController {
 					throw new RpcException({
 						message: 'You have too many existing S3 buckets',
 						code: GrpcStatus.OUT_OF_RANGE,
-					});
-				case 'InvalidBucketName':
-					throw new RpcException({
-						message: 'That bucket name is invalid',
-						code: GrpcStatus.FAILED_PRECONDITION,
 					});
 				default:
 					throw new RpcException({
