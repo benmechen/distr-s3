@@ -15,4 +15,4 @@ COPY --from=builder /usr/app/ ./
 ENV NODE_ENV=production
 
 EXPOSE 4001 50052
-CMD ["node", "dist/main.js"]
+CMD ["node", "dist/src/main.js"]
